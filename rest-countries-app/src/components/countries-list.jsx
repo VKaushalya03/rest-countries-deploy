@@ -1,71 +1,74 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import CountryCard from "./country-card"
-import { useSearchParams } from "react-router-dom"
-import type { Country } from "../lib/types"
+import { useEffect, useState } from "react";
+import CountryCard from "./country-card";
+import { useSearchParams } from "react-router-dom";
 
 export default function CountriesList() {
-  const [countries, setCountries] = useState<Country[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [searchParams] = useSearchParams()
-  const searchQuery = searchParams.get("search")
-  const regionFilter = searchParams.get("region")
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search");
+  const regionFilter = searchParams.get("region");
 
   useEffect(() => {
     async function fetchCountries() {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       try {
-        let url = "https://restcountries.com/v3.1/all"
+        let url = "https://restcountries.com/v3.1/all";
 
         // If there's a search query, use the name endpoint
         if (searchQuery) {
-          url = `https://restcountries.com/v3.1/name/${searchQuery}`
+          url = `https://restcountries.com/v3.1/name/${searchQuery}`;
         }
         // If there's a region filter, use the region endpoint
         else if (regionFilter) {
-          url = `https://restcountries.com/v3.1/region/${regionFilter}`
+          url = `https://restcountries.com/v3.1/region/${regionFilter}`;
         }
 
-        const response = await fetch(url)
+        const response = await fetch(url);
 
         if (!response.ok) {
           if (response.status === 404) {
-            setCountries([])
-            setLoading(false)
-            return
+            setCountries([]);
+            setLoading(false);
+            return;
           }
-          throw new Error("Failed to fetch countries")
+          throw new Error("Failed to fetch countries");
         }
 
-        const data = await response.json()
-        setCountries(data)
+        const data = await response.json();
+        setCountries(data);
       } catch (err) {
-        console.error("Error fetching countries:", err)
-        setError("Failed to load countries. Please try again later.")
-        setCountries([])
+        console.error("Error fetching countries:", err);
+        setError("Failed to load countries. Please try again later.");
+        setCountries([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchCountries()
-  }, [searchQuery, regionFilter])
+    fetchCountries();
+  }, [searchQuery, regionFilter]);
 
   if (loading) {
-    return <div className="text-center py-8">Loading countries...</div>
+    return <div className="text-center py-8">Loading countries...</div>;
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">{error}</div>
+    return <div className="text-center py-8 text-red-500">{error}</div>;
   }
 
   if (countries.length === 0) {
-    return <div className="text-center py-8">No countries found. Try adjusting your search or filters.</div>
+    return (
+      <div className="text-center py-8">
+        No countries found. Try adjusting your search or filters.
+      </div>
+    );
   }
 
   return (
@@ -74,5 +77,5 @@ export default function CountriesList() {
         <CountryCard key={country.cca3} country={country} />
       ))}
     </div>
-  )
+  );
 }

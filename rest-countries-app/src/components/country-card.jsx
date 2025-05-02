@@ -1,26 +1,19 @@
 "use client";
 
-import type React from "react";
-
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
-import type { Country } from "../lib/types";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useFavorites } from "../hooks/use-favorites";
 import { useUser } from "../context/user-context";
 import { cn } from "../lib/utils";
 
-interface CountryCardProps {
-  country: Country;
-}
-
-export default function CountryCard({ country }: CountryCardProps) {
+export default function CountryCard({ country }) {
   const { isLoggedIn } = useUser();
   const { favorites, toggleFavorite } = useFavorites();
   const isFavorite = favorites.includes(country.cca3);
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
