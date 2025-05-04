@@ -74,20 +74,26 @@ export default function FavoritesPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <Link to="/" className="inline-block">
-          <Button variant="outline" className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <Link to="/" className="inline-block w-full sm:w-auto">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 w-full sm:w-auto"
+          >
             <ArrowLeft size={16} />
             Back to Countries
           </Button>
         </Link>
 
-        <h1 className="text-3xl font-bold">Your Favorite Countries</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center">
+          Your Favorite Countries
+        </h1>
 
         <Button
           variant="destructive"
           onClick={handleClearFavorites}
           disabled={favorites.length === 0}
+          className="w-full sm:w-auto"
         >
           Clear All
         </Button>
@@ -97,15 +103,15 @@ export default function FavoritesPage() {
         <div className="text-center py-8">Loading your favorites...</div>
       ) : countries.length === 0 ? (
         <div className="text-center py-8">
-          <p className="mb-4">
+          <p className="mb-4 px-4">
             You haven&apos;t added any countries to your favorites yet.
           </p>
           <Link to="/">
-            <Button>Explore Countries</Button>
+            <Button className="w-full sm:w-auto">Explore Countries</Button>
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {countries.map((country) => (
             <CountryCard key={country.cca3} country={country} />
           ))}
