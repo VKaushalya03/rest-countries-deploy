@@ -10,7 +10,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin: [""],
+        origin: ["https://rest-countries-deploy.vercel.app"],
         methods: ["GET", "POST"],
         credentials: true,
     }
