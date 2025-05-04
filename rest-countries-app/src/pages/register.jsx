@@ -25,10 +25,9 @@ export default function RegisterPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple validation
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Error",
@@ -47,15 +46,35 @@ export default function RegisterPage() {
       return;
     }
 
-    // Mock registration - in a real app, this would call an API
-    login(email);
+    try {
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    toast({
-      title: "Success",
-      description: "Your account has been created successfully",
-    });
+      const data = await response.json();
 
-    navigate("/");
+      if (!response.ok) throw new Error(data.error || "Registration failed");
+
+      toast({
+        title: "Success",
+        description: "Your account has been created. Logging you in...",
+      });
+
+      // Auto-login after register
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userEmail", email);
+      login(email);
+
+      navigate("/");
+    } catch (err) {
+      toast({
+        title: "Registration failed",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (

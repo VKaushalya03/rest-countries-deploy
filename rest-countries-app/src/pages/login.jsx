@@ -23,10 +23,9 @@ export default function LoginPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple validation
     if (!email || !password) {
       toast({
         title: "Error",
@@ -36,15 +35,35 @@ export default function LoginPage() {
       return;
     }
 
-    // Mock login - in a real app, this would call an API
-    login(email);
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    toast({
-      title: "Success",
-      description: "You have been logged in successfully",
-    });
+      const data = await response.json();
 
-    navigate("/");
+      if (!response.ok) throw new Error(data.error || "Login failed");
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userEmail", data.user.email);
+
+      login(data.user.email);
+
+      toast({
+        title: "Success",
+        description: "You have been logged in successfully",
+      });
+
+      navigate("/");
+    } catch (err) {
+      toast({
+        title: "Login failed",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (

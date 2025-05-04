@@ -1,35 +1,59 @@
-"use client";
-
 import { useEffect, useState } from "react";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState([]);
 
-  // Load favorites from localStorage on component mount
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem("favorites");
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites));
-    }
-  }, []);
+  const fetchFavorites = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  // Save favorites to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const toggleFavorite = (countryCode) => {
-    setFavorites((prev) => {
-      if (prev.includes(countryCode)) {
-        return prev.filter((code) => code !== countryCode);
-      } else {
-        return [...prev, countryCode];
-      }
+    const res = await fetch("http://localhost:5000/api/favorites", {
+      headers: { Authorization: `Bearer ${token}` },
     });
+
+    if (res.ok) {
+      const data = await res.json();
+      setFavorites(data);
+    }
   };
 
-  const clearFavorites = () => {
-    setFavorites([]);
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+
+  const toggleFavorite = async (code) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch("http://localhost:5000/api/favorites/toggle", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ code }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setFavorites(data);
+    }
+  };
+
+  const clearFavorites = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const res = await fetch("http://localhost:5000/api/favorites/clear", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      setFavorites([]);
+    }
   };
 
   return { favorites, toggleFavorite, clearFavorites };

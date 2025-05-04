@@ -16,7 +16,8 @@ export function UserProvider({ children }) {
   // Load user session from localStorage on component mount
   useEffect(() => {
     const storedEmail = localStorage.getItem("userEmail");
-    if (storedEmail) {
+    const token = localStorage.getItem("token");
+    if (storedEmail && token) {
       setIsLoggedIn(true);
       setUserEmail(storedEmail);
     }
@@ -32,6 +33,7 @@ export function UserProvider({ children }) {
     setIsLoggedIn(false);
     setUserEmail(null);
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("token");
   };
 
   return (
