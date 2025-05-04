@@ -18,6 +18,10 @@ app.use(cors(
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the REST Countries API!");
+});
+
 app.use("/api", authRoutes);
 app.use("/api/favorites", favoritesRoutes);
 
